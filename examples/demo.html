@@ -1,0 +1,25 @@
+<d id="0">Hello world
+    <d>How may I help you?
+        <d class="1">I'd like a drink please</d>
+        <d class="2">I'd like a snack</d>
+        <d class="3">Nothing thanks</d>
+    </d>
+</d>
+
+<d id="1">What kind of drink?
+    <d>We have the following drinks available
+        <d if="AVAILABLE_MARTINI" then="GIVE_MARTINI" class="4">A martini please!</d>
+        <d if="AVAILABLE_VODKA" then="GIVE_VODKA" class="4">A vodka please</d>
+        <d class="4">Nothing thanks...</d>
+    </d>
+</d>
+
+<d id="2">Sorry, we're all out of snacks
+    <d class="4"></d>
+</d>
+
+<d id="3">Okay then
+    <d class="4"></d>
+</d>
+
+<d id="4">bye</d>
