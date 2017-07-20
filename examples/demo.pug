@@ -1,19 +1,19 @@
 d#0 Hello world
   d How may I help you?
-    d.1 I'd like a drink please
-    d.2 I'd like a snack
-    d.3 Nothing thanks
+    d(next=1) I'd like a drink please
+    d(next=2) I'd like a snack
+    d(next=3) Nothing thanks
 
 d#1 What kind of drink?
   d We have the following drinks available
-    d.4(if='AVAILABLE_MARTINI', then='GIVE_MARTINI') A martini please!
-    d.4(if='AVAILABLE_VODKA', then='GIVE_VODKA') A vodka please
-    d.4 Nothing thanks...
+    d(next=4, if='AVAILABLE_MARTINI', then='GIVE_MARTINI') A martini please!
+    d(next=4, if='AVAILABLE_VODKA', then='GIVE_VODKA') A vodka please
+    d(next=4) Nothing thanks...
 
 d#2 Sorry, we're all out of snacks
-  d.4
+  d(next=4)
 
 d#3 Okay then
-  d.4
+  d(next=4)
 
 d#4 bye

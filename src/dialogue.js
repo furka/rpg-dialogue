@@ -115,7 +115,7 @@ export default class Dialogue {
     const options = Array.from(node.childNodes).map(node => {
       if (node.nodeType === node.ELEMENT_NODE) {
         return {
-          id: Dialogue.parseID(node.id || node.className),
+          id: Dialogue.parseID(node.id || node.getAttribute('next')),
           text: Dialogue.getText(node),
           condition: node.getAttribute('if') || null,
           action: node.getAttribute('then') || null

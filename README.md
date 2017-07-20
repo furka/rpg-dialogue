@@ -29,10 +29,12 @@ Dialogue tree:
 
 ```pug
 d#0 Hello world
-  d.1 A good day to you too, sir and/or madam!
-  d.2 Bye.
+  d(next=1) A good day to you too, sir and/or madam!
+  d(next=2) Bye.
+
 d#1 Thanks!
-  d.2
+  d(next=2)
+
 d#2 Bye
 ```
 
@@ -81,10 +83,12 @@ To make life easier it is recommended to combine this with your favourite templa
 
 ```pug
 d#0 Hello world
-  d.1 A good day to you too, sir!
-  d.2 Bye.
+  d(next=1) A good day to you too, sir!
+  d(next=2) Bye.
+
 d#1 Thanks!
-  d.2
+  d(next=2)
+
 d#2 Bye
 ```
 
@@ -104,13 +108,13 @@ Use an ID to define a point in your dialogue that can be interacted with.
 d#0 Hello world
 ```
 
-### Class
+### Next
 
-Use a class whenever an end-point should continue with a different point in your dialogue, these must point to an existing id
+Use the `next` attribute to have dialogue options lead to a different point within the dialogue.
 
 ```pug
 d#0 Hello world
-  d.1 Thanks
+  d(next=1) Thanks
 
 d#1 Bye!
 ```
@@ -123,7 +127,7 @@ ID's can be omitted for non-branching dialogue trees
 d#0 Stay a while and listen
   d I have an amazing story to tell you
    d But time is running short
-    d.1 Ok...
+    d(next=1) Ok...
 
 d#1 Bye!
 ```
@@ -134,8 +138,8 @@ Conditions can be defined to control which branches can be accessed by the dialo
 
 ```pug
 d#0 Are you alive?
-  d.1(if='IS_ALIVE') Yes!
-  d.2 Maybe...
+  d(next=1, if='IS_ALIVE') Yes!
+  d(next=2) Maybe...
 
 d#1 Cool!
 d#2 Hmmmm...
@@ -160,13 +164,14 @@ Actions can be defined to trigger when a certain branch is reached in the dialog
 
 ```pug
 d#0 Do you feel lucky? Punk.
-  d.1 Yes!
-  d.2 Nope...
+  d(next=1) Yes!
+  d(next=2) Nope...
 
 d#1 Okay then.
 
 d#2(then='KILL_PLAYER') Wrong answer!
 ```
+
 
 ```js
 const ACTIONS = {
