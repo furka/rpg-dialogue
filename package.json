@@ -10,6 +10,10 @@
     "rpg",
     "game"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/furka/rpg-dialogue.git"
+  },
   "author": "Thomas Vranckx",
   "license": "MIT"
 }
