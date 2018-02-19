@@ -1,140 +1,144 @@
 export default class Dialogue {
-
   //create a new Dialogue tree from html data
   //see documentation for how to construct html
-  constructor (html) {
-    this.template = document.createElement('template');
-    this.template.innerHTML = html;
-    this.template = this.template.content;
+  constructor(html) {
+    this.template = document.createElement("template")
+    this.template.innerHTML = html
+    this.template = this.template.content
 
-    this.currentOptions = [];
+    this.currentOptions = []
   }
 
   //interact with the dialogue
-  interact (id, CONDITIONS, ACTIONS) {
-    id =  Dialogue.parseID(id);
+  interact(id, CONDITIONS, ACTIONS) {
+    id = Dialogue.parseID(id)
 
-    let element;
+    let element
 
     if (id === null) {
-      element = Array
-        .from(this.current.childNodes)
-        .filter(node => node.nodeType === node.ELEMENT_NODE)[0];
+      element = Array.from(this.current.childNodes).filter(
+        node => node.nodeType === node.ELEMENT_NODE
+      )[0]
     } else {
-      element = this.template.getElementById(id);
+      element = this.template.getElementById(id)
     }
 
-    this.current = element;
+    this.current = element
 
-    const text = Dialogue.getText(this.current);
+    const text = Dialogue.getText(this.current)
 
-    let responses = Dialogue.getOptions(this.current);
-    responses = this.validateOptions(responses);
-    responses = Dialogue.conditionOptions(responses, CONDITIONS);
+    let responses = Dialogue.getOptions(this.current)
+    responses = this.validateOptions(responses)
+    responses = Dialogue.conditionOptions(responses, CONDITIONS)
 
-    this.triggerActions(id, ACTIONS);
-    this.currentOptions = responses;
+    this.triggerActions(id, ACTIONS)
+    this.currentOptions = responses
 
     if (!text && responses.length === 0) {
-      throw new Error('Dialogue Error - dead end');
+      throw new Error("Dialogue Error - dead end")
     }
 
     return {
       text: text,
       responses: responses
-    };
+    }
   }
 
   //triggers actions for the current interaction
-  triggerActions (id, ACTIONS) {
+  triggerActions(id, ACTIONS) {
     if (!ACTIONS) {
-      return;
+      return
     }
 
     let actions = this.currentOptions
       .filter(option => option.id === id)
-      .map(option => option.action);
+      .map(option => option.action)
 
-    actions.push(this.current.getAttribute('then'));
+    actions.push(this.current.getAttribute("then"))
 
     actions
-      .map(action => ACTIONS[action])                             //map to functions
-      .filter(action => typeof action === 'function')             //filter non-functions
-      .filter((action, i, list) => list.indexOf(action) === i)    //filter duplicates
-      .forEach(action => action());                               //trigger actions
+      .map(action => ACTIONS[action]) //map to functions
+      .filter(action => typeof action === "function") //filter non-functions
+      .filter((action, i, list) => list.indexOf(action) === i) //filter duplicates
+      .forEach(action => action()) //trigger actions
   }
 
   //removes invalid options from a list of options
-  validateOptions (list) {
+  validateOptions(list) {
     return list.filter(option => {
       if (option.id === null && Dialogue.hasChildOptions(this.current)) {
-        return true;
+        return true
       } else if (this.template.getElementById(option.id)) {
-        return true;
+        return true
       } else {
-        console.warn('Invalid dialogue option', option);
+        console.warn("Invalid dialogue option", option)
       }
     })
   }
 
   //removes options from a list of options that don't meet their condition
-  static conditionOptions (list, CONDITIONS) {
+  static conditionOptions(list, CONDITIONS) {
     if (!CONDITIONS) {
-      return list;
+      return list
     }
 
     return list.filter(option => {
       if (!option.condition) {
-        return true;
-      } else if (typeof CONDITIONS[option.condition] === 'function') {
-        return CONDITIONS[option.condition]();
+        return true
+      } else if (typeof CONDITIONS[option.condition] === "function") {
+        return CONDITIONS[option.condition]()
       } else {
-        return CONDITIONS[option.condition];
+        return CONDITIONS[option.condition]
       }
     })
   }
 
   //parse an ID, making sure it's a number or null
-  static parseID (id) {
-    id = parseInt(id, 10);
+  static parseID(id) {
+    id = parseInt(id, 10)
 
     if (Number.isNaN(id)) {
-      id = null;
+      id = null
     }
 
-    return id;
+    return id
   }
 
   //checks whether a node has options
-  static hasChildOptions (node) {
-    return Array.from(node.childNodes).filter(node => node.nodeType === node.ELEMENT_NODE).length > 0;
+  static hasChildOptions(node) {
+    return (
+      Array.from(node.childNodes).filter(
+        node => node.nodeType === node.ELEMENT_NODE
+      ).length > 0
+    )
   }
 
   //returns the available options from a node
-  static getOptions (node) {
-    const options = Array.from(node.childNodes).map(node => {
-      if (node.nodeType === node.ELEMENT_NODE) {
-        return {
-          id: Dialogue.parseID(node.id || node.getAttribute('next')),
-          text: Dialogue.getText(node),
-          condition: node.getAttribute('if') || null,
-          action: node.getAttribute('then') || null
+  static getOptions(node) {
+    const options = Array.from(node.childNodes)
+      .map(node => {
+        if (node.nodeType === node.ELEMENT_NODE) {
+          return {
+            id: Dialogue.parseID(node.id || node.getAttribute("next")),
+            text: Dialogue.getText(node),
+            condition: node.getAttribute("if") || null,
+            action: node.getAttribute("then") || null
+          }
         }
-      }
-    })
-    .filter(option => Boolean(option));
+      })
+      .filter(option => Boolean(option))
 
     if (options.length === 1) {
-      options[0].text = null;
+      options[0].text = null
     }
 
-    return options;
+    return options
   }
 
   //returns the text of a node, ignoring its children
-  static getText (node) {
+  static getText(node) {
     return Array.from(node.childNodes).reduce((text, val) => {
-      return text + (val.nodeType === val.TEXT_NODE ? val.textContent : '');
-    }, '');
+      return text + (val.nodeType === val.TEXT_NODE ? val.textContent : "")
+    }, "")
   }
 }
