@@ -16,9 +16,15 @@ export default class Dialogue {
     let element
 
     if (id === null) {
-      element = this.next
+      if (this.next) {
+        element = this.next
+      }
     } else {
       element = this.template.getElementById(id)
+    }
+
+    if (!element) {
+      throw new Error("Dialogue Error - dead end")
     }
 
     this.current = element
@@ -33,7 +39,7 @@ export default class Dialogue {
       responses[0].text = null
     }
 
-    this.next = responses[0].node
+    this.next = responses[0] && responses[0].node
 
     this.triggerActions(id, ACTIONS)
     this.currentOptions = responses
