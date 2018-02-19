@@ -1,6 +1,6 @@
 {
   "name": "rpg-dialogue",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "An es6 class for handling dialogue trees, useful for RPG games",
   "main": "src/dialogue.js",
   "scripts": {},
