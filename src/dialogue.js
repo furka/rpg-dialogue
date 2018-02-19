@@ -16,9 +16,7 @@ export default class Dialogue {
     let element
 
     if (id === null) {
-      element = Array.from(this.current.childNodes).filter(
-        node => node.nodeType === node.ELEMENT_NODE
-      )[0]
+      element = this.next
     } else {
       element = this.template.getElementById(id)
     }
@@ -35,6 +33,8 @@ export default class Dialogue {
       responses[0].text = null
     }
 
+    this.next = responses[0].node
+
     this.triggerActions(id, ACTIONS)
     this.currentOptions = responses
 
@@ -44,7 +44,10 @@ export default class Dialogue {
 
     return {
       text: text,
-      responses: responses
+      responses: responses.map(response => ({
+        id: response.id,
+        text: response.text
+      }))
     }
   }
 
@@ -135,7 +138,8 @@ export default class Dialogue {
           id: Dialogue.parseID(node.id || node.getAttribute("next")),
           text: Dialogue.getText(node),
           condition: node.getAttribute("if") || null,
-          action: node.getAttribute("then") || null
+          action: node.getAttribute("then") || null,
+          node: node
         }
       })
 
