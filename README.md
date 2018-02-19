@@ -134,11 +134,14 @@ d#1 Bye!
 
 ### Conditions
 
-Conditions can be defined to control which branches can be accessed by the dialogue. This lets your application have control over when a specific dialogue option is available or not.
+Conditions can be defined to control which branches can be accessed by the dialogue.
+This lets your application have control over when a specific dialogue option is available or not.
+Conditions can be negated with `!`.
 
 ```pug
 d#0 Are you alive?
   d(next=1, if='IS_ALIVE') Yes!
+  d(next=1, if='!IS_ALIVE') Nope!
   d(next=2) Maybe...
 
 d#1 Cool!

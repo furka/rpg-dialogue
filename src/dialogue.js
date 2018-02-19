@@ -31,6 +31,10 @@ export default class Dialogue {
     responses = this.validateOptions(responses)
     responses = Dialogue.conditionOptions(responses, CONDITIONS)
 
+    if (responses.length === 1) {
+      responses[0].text = null
+    }
+
     this.triggerActions(id, ACTIONS)
     this.currentOptions = responses
 
@@ -85,10 +89,19 @@ export default class Dialogue {
     return list.filter(option => {
       if (!option.condition) {
         return true
-      } else if (typeof CONDITIONS[option.condition] === "function") {
-        return CONDITIONS[option.condition]()
+      }
+
+      const inverse = /^!/.test(option.condition)
+      let condition = option.condition.replace(/^!/, "")
+      condition = CONDITIONS[condition]
+      if (typeof condition === "function") {
+        condition = condition()
+      }
+
+      if (inverse) {
+        return !condition
       } else {
-        return CONDITIONS[option.condition]
+        return condition
       }
     })
   }
@@ -116,21 +129,15 @@ export default class Dialogue {
   //returns the available options from a node
   static getOptions(node) {
     const options = Array.from(node.childNodes)
+      .filter(node => node.nodeType === node.ELEMENT_NODE)
       .map(node => {
-        if (node.nodeType === node.ELEMENT_NODE) {
-          return {
-            id: Dialogue.parseID(node.id || node.getAttribute("next")),
-            text: Dialogue.getText(node),
-            condition: node.getAttribute("if") || null,
-            action: node.getAttribute("then") || null
-          }
+        return {
+          id: Dialogue.parseID(node.id || node.getAttribute("next")),
+          text: Dialogue.getText(node),
+          condition: node.getAttribute("if") || null,
+          action: node.getAttribute("then") || null
         }
       })
-      .filter(option => Boolean(option))
-
-    if (options.length === 1) {
-      options[0].text = null
-    }
 
     return options
   }
